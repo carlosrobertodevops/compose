@@ -250,17 +250,17 @@ services:
       FILE_SIZE_LIMIT: 52428800
       STORAGE_BACKEND: ${STORAGE_BACKEND}
       # FILE_STORAGE_BACKEND_PATH: /var/lib/storage
-      TENANT_ID: stub
+      TENANT_ID: ${TENANT_ID}
       # TODO: https://github.com/supabase/storage-api/issues/55
       GLOBAL_S3_BUCKET: ${GLOBAL_S3_BUCKET}
       GLOBAL_S3_ENDPOINT: ${GLOBAL_S3_ENDPOINT}
       GLOBAL_S3_PROTOCOL: ${GLOBAL_S3_PROTOCOL}
-      GLOBAL_S3_FORCE_PATH_STYLE: "true"
+      GLOBAL_S3_FORCE_PATH_STYLE: true
       REGION: ${REGION} #whatever your region is
       AWS_DEFAULT_REGION: ${AWS_DEFAULT_REGION}
       AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
-      AWS_SECRET_ACCESS_KEY: ${AWS_ACCESS_KEY_ID}
-      ENABLE_IMAGE_TRANSFORMATION: "true"
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      ENABLE_IMAGE_TRANSFORMATION: true
       IMGPROXY_URL: http://imgproxy:5001
 
     volumes:
@@ -457,7 +457,7 @@ services:
       - VAULT_ENC_KEY=your-encryption-key-32-chars-min
       - API_JWT_SECRET=${JWT_SECRET}
       - METRICS_JWT_SECRET=${JWT_SECRET}
-      - REGION=local
+      - REGION=${REGION}
       - ERL_AFLAGS=-proto_dist inet_tcp
       - POOLER_TENANT_ID=${POOLER_TENANT_ID}
       - POOLER_DEFAULT_POOL_SIZE=${POOLER_DEFAULT_POOL_SIZE}
