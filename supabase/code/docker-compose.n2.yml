@@ -14,12 +14,25 @@ services:
       - ./volumes/db:/mnt
     command: sh -c 
       echo '
+        -- Concede privilégios ao schema storage
         GRANT ALL PRIVILEGES ON SCHEMA storage TO supabase_storage_admin;
+        
+        -- Concede ownership das tabelas existentes
+        ALTER TABLE storage.buckets OWNER TO supabase_storage_admin;
+        ALTER TABLE storage.migrations OWNER TO supabase_storage_admin;
+        ALTER TABLE storage.objects OWNER TO supabase_storage_admin;
+        
+        -- Concede privilégios completos
         GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA storage TO supabase_storage_admin;
         GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA storage TO supabase_storage_admin;
-        ALTER DEFAULT PRIVILEGES IN SCHEMA storage GRANT ALL PRIVILEGES ON TABLES TO supabase_storage_admin;
-        ALTER DEFAULT PRIVILEGES IN SCHEMA storage GRANT ALL PRIVILEGES ON SEQUENCES TO supabase_storage_admin;
-        GRANT SELECT, INSERT, UPDATE ON TABLE storage.migrations TO supabase_storage_admin;
+        GRANT ALL PRIVILEGES ON ALL FUNCTIONS IN SCHEMA storage TO supabase_storage_admin;
+        
+        -- Configura privilégios padrão para novos objetos
+        ALTER DEFAULT PRIVILEGES IN SCHEMA storage
+        GRANT ALL PRIVILEGES ON TABLES TO supabase_storage_admin;
+        
+        ALTER DEFAULT PRIVILEGES IN SCHEMA storage
+        GRANT ALL PRIVILEGES ON SEQUENCES TO supabase_storage_admin;
       ' > /mnt/storage.sql
       && chmod 644 /mnt/storage.sql
 
