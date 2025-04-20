@@ -257,7 +257,6 @@ services:
       /usr/bin/mc mb --ignore-existing supabase-minio/stub;
       exit 0;
       "
-
   storage:
     image: supabase/storage-api:v1.11.13
     depends_on:
