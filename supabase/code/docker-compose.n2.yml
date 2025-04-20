@@ -7,6 +7,7 @@
 name: supabase
 
 services:
+
   studio:
     image: supabase/studio:20241202-71e5240
     restart: unless-stopped
@@ -344,8 +345,6 @@ services:
       timeout: 5s
       retries: 10
     depends_on:
-      create-storage-permissions:
-        condition: service_completed_successfully
       vector:
         condition: service_healthy
     command:
