@@ -488,8 +488,8 @@ services:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - DATABASE_URL=ecto://postgres:${POSTGRES_PASSWORD}@db:${POSTGRES_PORT}/_supabase
       - CLUSTER_POSTGRES=true
-      - SECRET_KEY_BASE=UpNVntn3cDxHJpq99YMc1T1AQgQpc8kfYTuRgBiYa15BLrx8etQoXz3gZv1/u2oq
-      - VAULT_ENC_KEY=your-encryption-key-32-chars-min
+      - SECRET_KEY_BASE=${JWT_SECRET} #UpNVntn3cDxHJpq99YMc1T1AQgQpc8kfYTuRgBiYa15BLrx8etQoXz3gZv1/u2oq
+      - VAULT_ENC_KEY= ${JWT_SECRET} #your-encryption-key-32-chars-min
       - API_JWT_SECRET=${JWT_SECRET}
       - METRICS_JWT_SECRET=${JWT_SECRET}
       - REGION=local
