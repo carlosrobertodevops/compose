@@ -14,7 +14,26 @@ services:
       - ./volumes/db:/mnt
     command: sh -c 
       echo '
-        -- Concede privilégios ao schema storage
+        -- 1. Concede privilégios ao schema storage
+        GRANT ALL PRIVILEGES ON DATABASE postgres TO supabase_storage_admin;
+
+        -- 2. Torne-o dono do schema storage
+        ALTER SCHEMA storage OWNER TO supabase_storage_admin;
+        
+        -- 3. Para cada tabela no schema storage
+        DO $$
+        DECLARE
+            tbl text;
+        BEGIN
+            FOR tbl IN 
+                SELECT tablename 
+                FROM pg_tables 
+                WHERE schemaname = 'storage'
+            LOOP
+                EXECUTE 'ALTER TABLE storage.' || tbl || ' OWNER TO supabase_storage_admin';
+            END LOOP;
+        END $$;
+
         GRANT ALL PRIVILEGES ON SCHEMA storage TO supabase_storage_admin;
         
         -- Concede ownership das tabelas existentes
