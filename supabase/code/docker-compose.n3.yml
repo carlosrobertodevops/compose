@@ -217,7 +217,7 @@ services:
       SEED_SELF_HOST: true
 
   # To use S3 backed storage: docker compose -f docker-compose.yml -f docker-compose.s3.yml up
-    minio:
+  minio:
     image: minio/minio
     ports:
       - '9000:9000'
