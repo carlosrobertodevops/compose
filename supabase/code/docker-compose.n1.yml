@@ -453,7 +453,7 @@ services:
       - DATABASE_URL=ecto://supabase_admin:${POSTGRES_PASSWORD}@db:${POSTGRES_PORT}/_supabase
       - CLUSTER_POSTGRES=true
       - SECRET_KEY_BASE=UpNVntn3cDxHJpq99YMc1T1AQgQpc8kfYTuRgBiYa15BLrx8etQoXz3gZv1/u2oq
-      - VAULT_ENC_KEY=your-encryption-key-32-chars-min
+      - VAULT_ENC_KEY=${JWT_SECRET}
       - API_JWT_SECRET=${JWT_SECRET}
       - METRICS_JWT_SECRET=${JWT_SECRET}
       - REGION=${REGION}
