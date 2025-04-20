@@ -12,7 +12,7 @@ services:
     restart: on-failure
     volumes:
       - ./volumes/db:/mnt
-    command: sh -c "
+    command: sh -c 
       echo '
         GRANT ALL PRIVILEGES ON SCHEMA storage TO supabase_storage_admin;
         GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA storage TO supabase_storage_admin;
@@ -22,7 +22,6 @@ services:
         GRANT SELECT, INSERT, UPDATE ON TABLE storage.migrations TO supabase_storage_admin;
       ' > /mnt/storage.sql
       && chmod 644 /mnt/storage.sql
-    "
 
   studio:
     image: supabase/studio:20241202-71e5240
