@@ -262,7 +262,6 @@ services:
       AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
       ENABLE_IMAGE_TRANSFORMATION: true
       IMGPROXY_URL: http://imgproxy:5001
-
     volumes:
       - ./volumes/storage:/var/lib/storage:z
 
