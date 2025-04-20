@@ -276,7 +276,7 @@ services:
       AUTH_JWT_SECRET: ${JWT_SECRET}
       DATABASE_URL: postgres://supabase_storage_admin:${POSTGRES_PASSWORD}@${POSTGRES_HOST:-supabase-db}:${POSTGRES_PORT:-5432}/${POSTGRES_DB:-postgres}
       DB_INSTALL_ROLES: false
-      STORAGE_BACKEND: s3
+      STORAGE_BACKEND: ${STORAGE_BACKEND} #s3
       STORAGE_S3_BUCKET: ${STORAGE_S3_BUCKET} #stub
       STORAGE_S3_ENDPOINT: ${STORAGE_S3_ENDPOINT} #http://supabase-minio:9000
       STORAGE_S3_FORCE_PATH_STYLE: true
