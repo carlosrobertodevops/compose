@@ -7,54 +7,6 @@
 name: supabase
 
 services:
-  create-storage-permissions:
-    image: alpine:latest
-    restart: on-failure
-    volumes:
-      - ./volumes/db:/mnt
-    command: sh -c 
-      echo '
-        -- 1. Concede privilégios ao schema storage
-        GRANT ALL PRIVILEGES ON DATABASE postgres TO supabase_storage_admin;
-
-        -- 2. Torne-o dono do schema storage
-        ALTER SCHEMA storage OWNER TO supabase_storage_admin;
-        
-        -- 3. Para cada tabela no schema storage
-        DO $$
-        DECLARE
-            tbl text;
-        BEGIN
-            FOR tbl IN 
-                SELECT tablename 
-                FROM pg_tables 
-                WHERE schemaname = 'storage'
-            LOOP
-                EXECUTE 'ALTER TABLE storage.' || tbl || ' OWNER TO supabase_storage_admin';
-            END LOOP;
-        END $$;
-
-        GRANT ALL PRIVILEGES ON SCHEMA storage TO supabase_storage_admin;
-        
-        -- Concede ownership das tabelas existentes
-        ALTER TABLE storage.buckets OWNER TO supabase_storage_admin;
-        ALTER TABLE storage.migrations OWNER TO supabase_storage_admin;
-        ALTER TABLE storage.objects OWNER TO supabase_storage_admin;
-        
-        -- Concede privilégios completos
-        GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA storage TO supabase_storage_admin;
-        GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA storage TO supabase_storage_admin;
-        GRANT ALL PRIVILEGES ON ALL FUNCTIONS IN SCHEMA storage TO supabase_storage_admin;
-        
-        -- Configura privilégios padrão para novos objetos
-        ALTER DEFAULT PRIVILEGES IN SCHEMA storage
-        GRANT ALL PRIVILEGES ON TABLES TO supabase_storage_admin;
-        
-        ALTER DEFAULT PRIVILEGES IN SCHEMA storage
-        GRANT ALL PRIVILEGES ON SEQUENCES TO supabase_storage_admin;
-      ' > /mnt/storage.sql
-      && chmod 644 /mnt/storage.sql
-
   studio:
     image: supabase/studio:20241202-71e5240
     restart: unless-stopped
@@ -257,10 +209,12 @@ services:
       /usr/bin/mc mb --ignore-existing supabase-minio/stub;
       exit 0;
       "
+  # To use S3 backed storage: docker compose -f docker-compose.yml -f docker-compose.s3.yml up
   storage:
     image: supabase/storage-api:v1.11.13
     depends_on:
       db:
+        # Disable this if you are using an external Postgres database
         condition: service_healthy
       rest:
         condition: service_started
@@ -285,15 +239,17 @@ services:
       SERVICE_KEY: ${SERVICE_ROLE_KEY}
       POSTGREST_URL: http://rest:3000
       PGRST_JWT_SECRET: ${JWT_SECRET}
-      DATABASE_URL: postgres://supabase_storage_admin:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}?sslmode=disable
+      DATABASE_URL: postgres://supabase_storage_admin:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
       FILE_SIZE_LIMIT: 52428800
       STORAGE_BACKEND: ${STORAGE_BACKEND}
+      # FILE_STORAGE_BACKEND_PATH: /var/lib/storage
       TENANT_ID: ${TENANT_ID}
+      # TODO: https://github.com/supabase/storage-api/issues/55
       GLOBAL_S3_BUCKET: ${GLOBAL_S3_BUCKET}
       GLOBAL_S3_ENDPOINT: ${GLOBAL_S3_ENDPOINT}
       GLOBAL_S3_PROTOCOL: ${GLOBAL_S3_PROTOCOL}
       GLOBAL_S3_FORCE_PATH_STYLE: true
-      REGION: ${REGION}
+      REGION: ${REGION} #whatever your region is
       AWS_DEFAULT_REGION: ${AWS_DEFAULT_REGION}
       AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
       AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
