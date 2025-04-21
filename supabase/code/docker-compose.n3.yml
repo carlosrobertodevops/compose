@@ -216,7 +216,7 @@ services:
       SEED_SELF_HOST: true
 
   # To use S3 backed storage: docker compose -f docker-compose.yml -f docker-compose.s3.yml up
-  minio:
+  supabase-minio:
     image: minio/minio:latest
     ports:
       - "9000:9000"
@@ -239,7 +239,7 @@ services:
       MINIO_ROOT_USER: ${MINIO_ROOT_USER} #supa-storage
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD} #secret1234
     depends_on:
-      minio:
+      supabase-minio:
         condition: service_healthy
     entrypoint: >
       /bin/sh -c "
@@ -259,7 +259,7 @@ services:
         condition: service_started
       imgproxy:
         condition: service_started
-      minio:
+      supabase-minio:
         condition: service_healthy
     healthcheck:
       test:
