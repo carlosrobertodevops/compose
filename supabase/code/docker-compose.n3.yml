@@ -239,7 +239,7 @@ services:
       MINIO_ROOT_USER: ${MINIO_ROOT_USER} #supa-storage
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD} #secret1234
     depends_on:
-      minio:
+      supabase-minio:
         condition: service_healthy
     entrypoint: >
       /bin/sh -c "
