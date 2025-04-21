@@ -206,8 +206,8 @@ services:
       retries: 5
     volumes:
       - ./volumes/storage:/data:z
-    networks:
-      - supabase-net
+    # networks:
+    #   - supabase-net
 
   minio-createbucket:
     container_name: supabase-minio-createbucket
@@ -227,8 +227,8 @@ services:
       /usr/bin/mc mb --ignore-existing supabase-minio/supabase;
       exit 0;
       "
-    networks:
-      - supabase-net
+    # networks:
+    #   - supabase-net
   # To use S3 backed storage: docker compose -f docker-compose.yml -f docker-compose.s3.yml up
   storage:
     image: supabase/storage-api:v1.11.13
@@ -277,8 +277,8 @@ services:
       IMGPROXY_URL: http://imgproxy:5001
     volumes:
       - ./volumes/storage:/var/lib/storage:z
-    networks:
-      - supabase-net
+    # networks:
+    #   - supabase-net
 
   imgproxy:
     image: darthsim/imgproxy:v3.8.0
