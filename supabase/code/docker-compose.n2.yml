@@ -42,8 +42,8 @@ services:
       LOGFLARE_URL: http://analytics:4000
       NEXT_PUBLIC_ENABLE_LOGS: true
       NEXT_ANALYTICS_BACKEND_PROVIDER: postgres
-    networks:
-      - supabase-net
+    # networks:
+    #   - supabase-net
 
   kong:
     image: kong:2.8.1
@@ -66,8 +66,8 @@ services:
       DASHBOARD_PASSWORD: ${DASHBOARD_PASSWORD}
     volumes:
       - ./volumes/api/kong.yml:/home/kong/temp.yml:ro
-    networks:
-      - supabase-net
+    # networks:
+    #   - supabase-net
 
   auth:
     image: supabase/gotrue:v2.164.0
@@ -119,8 +119,8 @@ services:
       GOTRUE_MAILER_URLPATHS_EMAIL_CHANGE: ${MAILER_URLPATHS_EMAIL_CHANGE}
       GOTRUE_EXTERNAL_PHONE_ENABLED: ${ENABLE_PHONE_SIGNUP}
       GOTRUE_SMS_AUTOCONFIRM: ${ENABLE_PHONE_AUTOCONFIRM}
-    networks:
-      - supabase-net
+    # networks:
+    #   - supabase-net
 
   rest:
     image: postgrest/postgrest:v12.2.0
@@ -141,8 +141,8 @@ services:
       PGRST_APP_SETTINGS_JWT_SECRET: ${JWT_SECRET}
       PGRST_APP_SETTINGS_JWT_EXP: ${JWT_EXPIRY}
     command: "postgrest"
-    networks:
-      - supabase-net
+    # networks:
+    #   - supabase-net
 
   realtime:
     image: supabase/realtime:v2.33.58
@@ -184,8 +184,8 @@ services:
       RLIMIT_NOFILE: "10000"
       APP_NAME: realtime
       SEED_SELF_HOST: true
-    networks:
-      - supabase-net
+    # networks:
+    #   - supabase-net
 
   supabase-minio:
     container_name: supabase-minio
@@ -206,8 +206,8 @@ services:
       retries: 5
     volumes:
       - ./volumes/storage:/data:z
-    networks:
-      - supabase-net
+    # networks:
+    #   - supabase-net
 
   minio-createbucket:
     container_name: supabase-minio-createbucket
@@ -225,8 +225,8 @@ services:
       /usr/bin/mc mb --ignore-existing supabase-minio/stub;
       exit 0;
       "
-    networks:
-      - supabase-net
+    # networks:
+    #   - supabase-net
   # To use S3 backed storage: docker compose -f docker-compose.yml -f docker-compose.s3.yml up
   storage:
     image: supabase/storage-api:v1.11.13
@@ -275,8 +275,8 @@ services:
       IMGPROXY_URL: http://imgproxy:5001
     volumes:
       - ./volumes/storage:/var/lib/storage:z
-    networks:
-      - supabase-net
+    # networks:
+    #   - supabase-net
 
   imgproxy:
     image: darthsim/imgproxy:v3.8.0
@@ -293,8 +293,8 @@ services:
       IMGPROXY_ENABLE_WEBP_DETECTION: ${IMGPROXY_ENABLE_WEBP_DETECTION}
     volumes:
       - ./volumes/storage:/var/lib/storage:z
-    networks:
-      - supabase-net
+    # networks:
+    #   - supabase-net
 
   meta:
     image: supabase/postgres-meta:v0.84.2
@@ -311,8 +311,8 @@ services:
       PG_META_DB_NAME: ${POSTGRES_DB}
       PG_META_DB_USER: supabase_admin
       PG_META_DB_PASSWORD: ${POSTGRES_PASSWORD}
-    networks:
-      - supabase-net
+    # networks:
+    #   - supabase-net
 
   functions:
     image: supabase/edge-runtime:v1.65.3
@@ -333,8 +333,8 @@ services:
       - start
       - --main-service
       - /home/deno/functions/main
-    networks:
-      - supabase-net
+    # networks:
+    #   - supabase-net
 
   analytics:
     image: supabase/logflare:1.4.0
@@ -362,8 +362,8 @@ services:
       POSTGRES_BACKEND_URL: postgresql://supabase_admin:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/_supabase
       POSTGRES_BACKEND_SCHEMA: _analytics
       LOGFLARE_FEATURE_FLAG_OVERRIDE: multibackend=true
-    networks:
-      - supabase-net
+    # networks:
+    #   - supabase-net
 
   db:
     image: supabase/postgres:15.6.1.139
@@ -403,8 +403,8 @@ services:
       - ./volumes/db/logs.sql:/docker-entrypoint-initdb.d/migrations/99-logs.sql:Z
       - ./volumes/db/pooler.sql:/docker-entrypoint-initdb.d/migrations/99-pooler.sql:Z
       - db-config:/etc/postgresql-custom
-    networks:
-      - supabase-net
+    # networks:
+    #   - supabase-net
 
   vector:
     image: timberio/vector:0.28.1-alpine
@@ -428,8 +428,8 @@ services:
     environment:
       LOGFLARE_API_KEY: ${LOGFLARE_API_KEY}
     command: ["--config", "/etc/vector/vector.yml"]
-    networks:
-      - supabase-net
+    # networks:
+    #   - supabase-net
 
   supavisor:
     image: supabase/supavisor:1.1.56
@@ -468,12 +468,11 @@ services:
       - POOLER_POOL_MODE=transaction
     volumes:
       - ./volumes/pooler/pooler.exs:/etc/pooler/pooler.exs:ro
-    networks:
-      - supabase-net
+    # networks:
+    #   - supabase-net
 
 volumes:
   db-config:
-
-networks:
-  supabase-net:
-    driver: bridge
+# networks:
+#   supabase-net:
+#     driver: bridge
