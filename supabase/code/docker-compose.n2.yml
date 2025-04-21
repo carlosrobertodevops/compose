@@ -84,9 +84,9 @@ services:
           "--spider",
           "http://localhost:9999/health",
         ]
-      timeout: 10s
-      interval: 10s
-      retries: 10
+      timeout: 5s
+      interval: 5s
+      retries: 3
     restart: unless-stopped
     environment:
       GOTRUE_API_HOST: 0.0.0.0
