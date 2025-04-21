@@ -6,13 +6,13 @@ sources:
   docker_host:
     type: docker_logs
     exclude_containers:
-      - supabase-vector
+    - supabase-vector
 
 transforms:
   project_logs:
     type: remap
     inputs:
-      - docker_host
+    - docker_host
     source: |-
       .project = "default"
       .event_message = del(.message)
@@ -28,12 +28,13 @@ transforms:
   router:
     type: route
     inputs:
-      - project_logs
+    - project_logs
     route:
       kong: '.appname == "supabase-kong"'
       auth: '.appname == "supabase-auth"'
       rest: '.appname == "supabase-rest"'
       realtime: '.appname == "supabase-realtime"'
+      minio: '.appname == "supabase-minio"'
       storage: '.appname == "supabase-storage"'
       functions: '.appname == "supabase-functions"'
       db: '.appname == "supabase-db"'
@@ -41,7 +42,7 @@ transforms:
   kong_logs:
     type: remap
     inputs:
-      - router.kong
+    - router.kong
     source: |-
       req, err = parse_nginx_log(.event_message, "combined")
       if err == null {
@@ -61,7 +62,7 @@ transforms:
   kong_err:
     type: remap
     inputs:
-      - router.kong
+    - router.kong
     source: |-
       .metadata.request.method = "GET"
       .metadata.response.status_code = 200
@@ -85,7 +86,7 @@ transforms:
   auth_logs:
     type: remap
     inputs:
-      - router.auth
+    - router.auth
     source: |-
       parsed, err = parse_json(.event_message)
       if err == null {
@@ -96,7 +97,7 @@ transforms:
   rest_logs:
     type: remap
     inputs:
-      - router.rest
+    - router.rest
     source: |-
       parsed, err = parse_regex(.event_message, r'^(?P<time>.*): (?P<msg>.*)$')
       if err == null {
@@ -108,7 +109,7 @@ transforms:
   realtime_logs:
     type: remap
     inputs:
-      - router.realtime
+    - router.realtime
     source: |-
       .metadata.project = del(.project)
       .metadata.external_id = .metadata.project
@@ -121,7 +122,7 @@ transforms:
   storage_logs:
     type: remap
     inputs:
-      - router.storage
+    - router.storage
     source: |-
       .metadata.project = del(.project)
       .metadata.tenantId = .metadata.project
@@ -137,7 +138,7 @@ transforms:
   db_logs:
     type: remap
     inputs:
-      - router.db
+    - router.db
     source: |-
       .metadata.host = "db-default"
       .metadata.parsed.timestamp = .timestamp
@@ -159,7 +160,7 @@ sinks:
   logflare_auth:
     type: 'http'
     inputs:
-      - auth_logs
+    - auth_logs
     encoding:
       codec: 'json'
     method: 'post'
@@ -169,7 +170,7 @@ sinks:
   logflare_realtime:
     type: 'http'
     inputs:
-      - realtime_logs
+    - realtime_logs
     encoding:
       codec: 'json'
     method: 'post'
@@ -179,7 +180,7 @@ sinks:
   logflare_rest:
     type: 'http'
     inputs:
-      - rest_logs
+    - rest_logs
     encoding:
       codec: 'json'
     method: 'post'
@@ -189,7 +190,7 @@ sinks:
   logflare_db:
     type: 'http'
     inputs:
-      - db_logs
+    - db_logs
     encoding:
       codec: 'json'
     method: 'post'
@@ -202,7 +203,7 @@ sinks:
   logflare_functions:
     type: 'http'
     inputs:
-      - router.functions
+    - router.functions
     encoding:
       codec: 'json'
     method: 'post'
@@ -212,7 +213,7 @@ sinks:
   logflare_storage:
     type: 'http'
     inputs:
-      - storage_logs
+    - storage_logs
     encoding:
       codec: 'json'
     method: 'post'
@@ -222,8 +223,8 @@ sinks:
   logflare_kong:
     type: 'http'
     inputs:
-      - kong_logs
-      - kong_err
+    - kong_logs
+    - kong_err
     encoding:
       codec: 'json'
     method: 'post'
