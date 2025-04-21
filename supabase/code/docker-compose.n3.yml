@@ -216,41 +216,7 @@ services:
       SEED_SELF_HOST: true
 
   # To use S3 backed storage: docker compose -f docker-compose.yml -f docker-compose.s3.yml up
-  minio:
-    container_name: supabase-minio
-    image: minio/minio:latest
-    ports:
-      - "9000:9000"
-      - "9001:9001"
-    environment:
-      MINIO_ROOT_USER: ${MINIO_ROOT_USER} #supa-storage
-      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD} #secret1234
-    command: server --console-address "http://minio:9001" /data
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://minio:9000/minio/health/live"]
-      interval: 2s
-      timeout: 10s
-      retries: 5
-    volumes:
-      - ./volumes/storage:/data:z
-
-  minio-createbucket:
-    image: minio/mc
-    environment:
-      MINIO_ROOT_USER: ${MINIO_ROOT_USER} #supa-storage
-      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD} #secret1234
-    depends_on:
-      minio:
-        condition: service_healthy
-    entrypoint: >
-      /bin/sh -c "
-      /usr/bin/mc alias set supa-minio http://minio:9000 ${MINIO_ROOT_USER} ${MINIO_ROOT_PASSWORD};
-      /usr/bin/mc mb supa-minio/stub;
-      exit 0;
-      "
-
   storage:
-    container_name: supabase-storage
     image: supabase/storage-api:v1.11.13
     depends_on:
       db:
@@ -260,8 +226,6 @@ services:
         condition: service_started
       imgproxy:
         condition: service_started
-      minio:
-        condition: service_healthy
     healthcheck:
       test:
         [
@@ -270,7 +234,7 @@ services:
           "--no-verbose",
           "--tries=1",
           "--spider",
-          "http://localhost:5000/status",
+          "http://storage:5000/status",
         ]
       timeout: 5s
       interval: 5s
@@ -288,7 +252,7 @@ services:
       TENANT_ID: ${TENANT_ID}
       # TODO: https://github.com/supabase/storage-api/issues/55
       GLOBAL_S3_BUCKET: ${GLOBAL_S3_BUCKET}
-      GLOBAL_S3_ENDPOINT: http://supabase_minio:9000
+      GLOBAL_S3_ENDPOINT: ${GLOBAL_S3_ENDPOINT}
       GLOBAL_S3_PROTOCOL: ${GLOBAL_S3_PROTOCOL}
       GLOBAL_S3_FORCE_PATH_STYLE: true
       REGION: ${REGION} #whatever your region is
