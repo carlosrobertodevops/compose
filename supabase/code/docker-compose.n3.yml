@@ -306,7 +306,7 @@ services:
       TENANT_ID: ${TENANT_ID}
       # TODO: https://github.com/supabase/storage-api/issues/55
       GLOBAL_S3_BUCKET: ${GLOBAL_S3_BUCKET}
-      GLOBAL_S3_ENDPOINT: ${GLOBAL_S3_ENDPOINT}
+      GLOBAL_S3_ENDPOINT: http://minio:9001
       GLOBAL_S3_PROTOCOL: ${GLOBAL_S3_PROTOCOL}
       GLOBAL_S3_FORCE_PATH_STYLE: true
       REGION: ${REGION} #whatever your region is
