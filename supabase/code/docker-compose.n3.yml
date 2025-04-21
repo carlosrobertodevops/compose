@@ -352,7 +352,7 @@ services:
   #     STORAGE_BACKEND: ${STORAGE_BACKEND}
   #     # FILE_STORAGE_BACKEND_PATH: /var/lib/storage
   #     TENANT_ID: ${TENANT_ID}
-  #     # TODO: https://github.com/supabase/storage-api/issues/55
+  #     ## TODO: https://github.com/supabase/storage-api/issues/55
   #     GLOBAL_S3_BUCKET: ${GLOBAL_S3_BUCKET}
   #     GLOBAL_S3_ENDPOINT: ${GLOBAL_S3_ENDPOINT}
   #     GLOBAL_S3_PROTOCOL: ${GLOBAL_S3_PROTOCOL}
