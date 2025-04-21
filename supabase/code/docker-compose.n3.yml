@@ -224,7 +224,7 @@ services:
     environment:
       MINIO_ROOT_USER: ${MINIO_ROOT_USER} #supa-storage
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD} #secret1234
-    command: server --console-address ":9001" /data
+    command: server --console-address "supabase-minio:9001" /data
     healthcheck:
       test:
         ["CMD", "curl", "-f", "http://supabase-minio:9000/minio/health/live"]
