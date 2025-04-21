@@ -216,7 +216,7 @@ services:
       SEED_SELF_HOST: true
 
   # To use S3 backed storage: docker compose -f docker-compose.yml -f docker-compose.s3.yml up
-  supabase-minio:
+  minio:
     image: minio/minio:latest
     ports:
       - "9000:9000"
@@ -224,10 +224,10 @@ services:
     environment:
       MINIO_ROOT_USER: ${MINIO_ROOT_USER} #supa-storage
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD} #secret1234
-    command: server --console-address "http://supabase-minio:9001" /data
+    command: server --console-address "http://supabase_minio:9001" /data
     healthcheck:
       test:
-        ["CMD", "curl", "-f", "http://supabase-minio:9000/minio/health/live"]
+        ["CMD", "curl", "-f", "http://supabase_minio:9000/minio/health/live"]
       interval: 2s
       timeout: 10s
       retries: 5
@@ -240,11 +240,11 @@ services:
       MINIO_ROOT_USER: ${MINIO_ROOT_USER} #supa-storage
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD} #secret1234
     depends_on:
-      supabase-minio:
+      minio:
         condition: service_healthy
     entrypoint: >
       /bin/sh -c "
-      /usr/bin/mc alias set supa-minio http://supabase-minio:9000 ${MINIO_ROOT_USER} ${MINIO_ROOT_PASSWORD};
+      /usr/bin/mc alias set supa-minio http://supabase_minio:9000 ${MINIO_ROOT_USER} ${MINIO_ROOT_PASSWORD};
       /usr/bin/mc mb supa-minio/stub;
       exit 0;
       "
@@ -260,7 +260,7 @@ services:
         condition: service_started
       imgproxy:
         condition: service_started
-      supabase-minio:
+      minio:
         condition: service_healthy
     healthcheck:
       test:
@@ -288,7 +288,7 @@ services:
       TENANT_ID: ${TENANT_ID}
       # TODO: https://github.com/supabase/storage-api/issues/55
       GLOBAL_S3_BUCKET: ${GLOBAL_S3_BUCKET}
-      GLOBAL_S3_ENDPOINT: http://supabase-minio:9000
+      GLOBAL_S3_ENDPOINT: http://supabase_minio:9000
       GLOBAL_S3_PROTOCOL: ${GLOBAL_S3_PROTOCOL}
       GLOBAL_S3_FORCE_PATH_STYLE: true
       REGION: ${REGION} #whatever your region is
