@@ -259,7 +259,7 @@ services:
         condition: service_started
       imgproxy:
         condition: service_started
-      minio:
+      supabase-minio:
         condition: service_healthy
     healthcheck:
       test:
