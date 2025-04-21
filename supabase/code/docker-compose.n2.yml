@@ -236,6 +236,8 @@ services:
         condition: service_healthy
       rest:
         condition: service_started
+      supabase-minio:
+        condition: service_healthy
       imgproxy:
         condition: service_started
     healthcheck:
