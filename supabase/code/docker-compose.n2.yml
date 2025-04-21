@@ -197,7 +197,7 @@ services:
     environment:
       MINIO_ROOT_USER: ${MINIO_ROOT_USER}
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
-      MINIO_BROWSER_REDIRECT_URL: http://supabase-minio:9001
+      # MINIO_BROWSER_REDIRECT_URL: http://supabase-minio:9001
     command: server --console-address ":9001" /data
     healthcheck:
       test: sleep 5 && exit 0
