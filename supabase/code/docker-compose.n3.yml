@@ -45,6 +45,8 @@ services:
       NEXT_ANALYTICS_BACKEND_PROVIDER: postgres
       # Uncomment to use Big Query backend for analytics
       # NEXT_ANALYTICS_BACKEND_PROVIDER: bigquery
+    networks:
+      - supabase-net
 
   kong:
     image: kong:2.8.1
@@ -70,6 +72,8 @@ services:
     volumes:
       # https://github.com/supabase/supabase/issues/12661
       - ./volumes/api/kong.yml:/home/kong/temp.yml:ro
+    networks:
+      - supabase-net
 
   auth:
     image: supabase/gotrue:v2.164.0
@@ -152,7 +156,8 @@ services:
       # GOTRUE_HOOK_SEND_EMAIL_ENABLED: "false"
       # GOTRUE_HOOK_SEND_EMAIL_URI: "http://host.docker.internal:54321/functions/v1/email_sender"
       # GOTRUE_HOOK_SEND_EMAIL_SECRETS: "v1,whsec_VGhpcyBpcyBhbiBleGFtcGxlIG9mIGEgc2hvcnRlciBCYXNlNjQgc3RyaW5n"
-
+    networks:
+      - supabase-net
   rest:
     image: postgrest/postgrest:v12.2.0
     depends_on:
@@ -171,7 +176,8 @@ services:
       PGRST_APP_SETTINGS_JWT_SECRET: ${JWT_SECRET}
       PGRST_APP_SETTINGS_JWT_EXP: ${JWT_EXPIRY}
     command: "postgrest"
-
+    networks:
+      - supabase-net
   realtime:
     # This container name looks inconsistent but is correct because realtime constructs tenant id by parsing the subdomain
     image: supabase/realtime:v2.33.58
@@ -224,6 +230,7 @@ services:
     environment:
       MINIO_ROOT_USER: ${MINIO_ROOT_USER} #supa-storage
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD} #secret1234
+      MINIO_BROWSER_REDIRECT_URL: http://minio:9001
     command: server --console-address ":9001" /data
     healthcheck:
       test: ["CMD", "curl", "-f", "http://minio:9000/minio/health/live"]
@@ -232,7 +239,8 @@ services:
       retries: 5
     volumes:
       - ./volumes/storage:/data:z
-
+    networks:
+      - supabase-net
   minio-createbucket:
     image: minio/mc
     environment:
@@ -247,6 +255,8 @@ services:
       /usr/bin/mc mb supa-minio/stub;
       exit 0;
       "
+    networks:
+      - supabase-net
 
   storage:
     container_name: supabase-storage
@@ -298,6 +308,8 @@ services:
       IMGPROXY_URL: http://imgproxy:5001
     volumes:
       - ./volumes/storage:/var/lib/storage:z
+    networks:
+      - supabase-net
 
   imgproxy:
     image: darthsim/imgproxy:v3.8.0
@@ -313,6 +325,8 @@ services:
       IMGPROXY_ENABLE_WEBP_DETECTION: ${IMGPROXY_ENABLE_WEBP_DETECTION}
     volumes:
       - ./volumes/storage:/var/lib/storage:z
+    networks:
+      - supabase-net
 
   meta:
     image: supabase/postgres-meta:v0.84.2
@@ -330,6 +344,8 @@ services:
       PG_META_DB_NAME: ${POSTGRES_DB}
       PG_META_DB_USER: supabase_admin
       PG_META_DB_PASSWORD: ${POSTGRES_PASSWORD}
+    networks:
+      - supabase-net
 
   functions:
     image: supabase/edge-runtime:v1.65.3
@@ -351,6 +367,8 @@ services:
       - start
       - --main-service
       - /home/deno/functions/main
+    networks:
+      - supabase-net
 
   analytics:
     image: supabase/logflare:1.4.0
@@ -391,7 +409,10 @@ services:
       # GOOGLE_PROJECT_ID: ${GOOGLE_PROJECT_ID}
       # GOOGLE_PROJECT_NUMBER: ${GOOGLE_PROJECT_NUMBER}
 
-  # Comment out everything below this point if you are using an external Postgres database
+    # Comment out everything below this point if you are using an external Postgres database
+    networks:
+      - supabase-net
+
   db:
     image: supabase/postgres:15.6.1.139
     healthcheck:
@@ -437,6 +458,8 @@ services:
       - ./volumes/db/pooler.sql:/docker-entrypoint-initdb.d/migrations/99-pooler.sql:Z
       # Use named volume to persist pgsodium decryption key between restarts
       - db-config:/etc/postgresql-custom
+    networks:
+      - supabase-net
 
   vector:
     image: timberio/vector:0.28.1-alpine
@@ -459,7 +482,8 @@ services:
     environment:
       LOGFLARE_API_KEY: ${LOGFLARE_API_KEY}
     command: ["--config", "/etc/vector/vector.yml"]
-
+    networks:
+      - supabase-net
   # Update the DATABASE_URL if you are using an external Postgres database
   supavisor:
     image: supabase/supavisor:1.1.56
@@ -498,6 +522,11 @@ services:
       - POOLER_POOL_MODE=transaction
     volumes:
       - ./volumes/pooler/pooler.exs:/etc/pooler/pooler.exs:ro
+    networks:
+      - supabase-net
 
 volumes:
   db-config:
+networks:
+  supabase-net:
+    driver: bridge
