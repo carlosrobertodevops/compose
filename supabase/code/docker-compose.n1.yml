@@ -11,8 +11,8 @@ services:
     image: "jc21/nginx-proxy-manager:latest"
     restart: unless-stopped
     ports:
-      - "8080:8080"
-      - "8081:8081"
+      - "8082:8082"
+      - "8083:8083"
       - "8443:8443"
     volumes:
       - ./nginx-data:/data
