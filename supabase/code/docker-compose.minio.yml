@@ -13,7 +13,7 @@ services:
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
       MINIO_SERVER_URL: ${MINIO_SERVER_URL}
     command: server /data --console-address ":9090"
-  nginx:
+  minio-nginx:
     image: "jc21/nginx-proxy-manager:latest"
     restart: unless-stopped
     ports:
@@ -23,3 +23,5 @@ services:
     volumes:
       - ./nginx-data:/data
       - ./nginx-letsencrypt:/etc/letsencrypt
+    environment:
+      - TZ=America/Sao_Paulo
