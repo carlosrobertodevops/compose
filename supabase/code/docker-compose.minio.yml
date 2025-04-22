@@ -4,7 +4,7 @@
 
 services:
   minio:
-    image: quay.io/minio/minio
+    image: quay.io/minio/minio:latest
     container_name: minio
     volumes:
       - ./minio-data:/data
