@@ -16,7 +16,7 @@ services:
           "node",
           "-e",
           "fetch('http://studio:3000/api/profile').then((r) => {if (r.status
-          !== 200) throw new Error(r.status)})",
+          !== 200) throw new Error(r.status)})"
         ]
       timeout: 10s
       interval: 5s
@@ -87,7 +87,7 @@ services:
           "--no-verbose",
           "--tries=1",
           "--spider",
-          "http://localhost:9999/health",
+          "http://localhost:9999/health"
         ]
       timeout: 5s
       interval: 5s
@@ -192,7 +192,7 @@ services:
           "/dev/null",
           "-H",
           "Authorization: Bearer ${ANON_KEY}",
-          "http://localhost:4000/api/tenants/realtime-dev/health",
+          "http://localhost:4000/api/tenants/realtime-dev/health"
         ]
       timeout: 5s
       interval: 5s
@@ -224,6 +224,7 @@ services:
     environment:
       MINIO_ROOT_USER: ${MINIO_ROOT_USER} #supa-storage
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD} #secret1234
+      MINIO_BROWSER_REDIRECT_URL: http://minio:9001
     command: server --console-address ":9001" /data
     healthcheck:
       test: ["CMD", "curl", "-f", "http://minio:9000/minio/health/live"]
@@ -244,7 +245,7 @@ services:
     entrypoint: >
       /bin/sh -c "
       /usr/bin/mc alias set supa-minio http://minio:9000 ${MINIO_ROOT_USER} ${MINIO_ROOT_PASSWORD};
-      /usr/bin/mc mb --ignore-existing supabase-minio/stub;
+      /usr/bin/mc mb --ignore-existing supa-minio/stub;
       /usr/bin/mc mb --ignore-existing supa-minio/uploads;
       /usr/bin/mc mb --ignore-existing supa-minio/supabase;
       exit 0;
@@ -271,7 +272,7 @@ services:
           "--no-verbose",
           "--tries=1",
           "--spider",
-          "http://localhost:5000/status",
+          "http://localhost:5000/status"
         ]
       timeout: 5s
       interval: 5s
@@ -283,9 +284,9 @@ services:
       POSTGREST_URL: http://rest:3000
       PGRST_JWT_SECRET: ${JWT_SECRET}
       DATABASE_URL: postgres://supabase_storage_admin:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
-      FILE_SIZE_LIMIT: 52428800
+      FILE_SIZE_LIMIT: 32428800
       STORAGE_BACKEND: ${STORAGE_BACKEND}
-      # FILE_STORAGE_BACKEND_PATH: /var/lib/storage
+      FILE_STORAGE_BACKEND_PATH: /var/lib/storage
       TENANT_ID: ${TENANT_ID}
       # TODO: https://github.com/supabase/storage-api/issues/55
       GLOBAL_S3_BUCKET: ${GLOBAL_S3_BUCKET}
@@ -293,10 +294,10 @@ services:
       GLOBAL_S3_PROTOCOL: ${GLOBAL_S3_PROTOCOL}
       GLOBAL_S3_FORCE_PATH_STYLE: true
       REGION: ${REGION} #whatever your region is
-      # AWS_DEFAULT_REGION: ${MINIO_ROOT_USER}
-      # AWS_ACCESS_KEY_ID: ${MINIO_ROOT_PASSWORD}
-      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
-      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      AWS_DEFAULT_REGION: ${MINIO_ROOT_USER}
+      AWS_ACCESS_KEY_ID: ${MINIO_ROOT_PASSWORD}
+      # AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      # AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
       ENABLE_IMAGE_TRANSFORMATION: true
       IMGPROXY_URL: http://imgproxy:5001
     volumes:
@@ -385,7 +386,6 @@ services:
       LOGFLARE_SINGLE_TENANT: true
       LOGFLARE_SUPABASE_MODE: true
       LOGFLARE_MIN_CLUSTER_SIZE: 1
-
       # Comment variables to use Big Query backend for analytics
       POSTGRES_BACKEND_URL: postgresql://supabase_admin:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/_supabase
       POSTGRES_BACKEND_SCHEMA: _analytics
@@ -452,7 +452,7 @@ services:
           "--no-verbose",
           "--tries=1",
           "--spider",
-          "http://vector:9001/health",
+          "http://vector:9001/health"
         ]
       timeout: 5s
       interval: 5s
