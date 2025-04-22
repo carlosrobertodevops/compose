@@ -13,7 +13,7 @@ services:
     ports:
       - "8080:8080"
       - "8081:8081"
-      - "4443:4443"
+      - "443:443"
     volumes:
       - ./nginx-data:/data
       - ./nginx-letsencrypt:/etc/letsencrypt
