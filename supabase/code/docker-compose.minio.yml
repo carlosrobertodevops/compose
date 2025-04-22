@@ -13,7 +13,7 @@ services:
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
       MINIO_SERVER_URL: ${MINIO_SERVER_URL}
     command: server /data --console-address ":9090"
-  minio-nginx:
+  nginx:
     image: "jc21/nginx-proxy-manager:latest"
     restart: unless-stopped
     ports:
