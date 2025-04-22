@@ -1,0 +1,26 @@
+###
+# MINIO
+##
+
+services:
+  minio:
+    image: quay.io/minio/minio
+    container_name: minio
+    volumes:
+      - ./minio-data:/data
+  environment:
+    MINIO_ROOT_USER: your_root_user
+    MINIO_ROOT_PASSWORD: your_root_password
+    MINIO_ SERVER_URL: https://s3.mondaha.com
+  command: server /data --console-address ":9090"
+
+  nginx:
+    image: "jc21/nginx-proxy-manager:latest"
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+      - "8081:8081"
+      - "443:443"
+    volumes:
+      - ./nginx-data:/data
+      - •/nginx-letsencrypt:/etc/letsencrypt
