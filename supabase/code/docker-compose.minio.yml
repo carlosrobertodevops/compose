@@ -3,9 +3,9 @@
 ##
 
 services:
-  minio-supa:
+  minio:
     image: quay.io/minio/minio
-    container_name: minio-supa
+    container_name: minio
     volumes:
       - ./minio-data:/data
     environment:
