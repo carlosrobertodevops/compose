@@ -27,7 +27,6 @@ services:
     volumes:
       - ./nginx-data:/data
       - ./nginx-letsencrypt:/etc/letsencrypt
-
-networks:
-  easypanel_network:
-    external: true
+# networks:
+#   easypanel_network:
+#     external: true
