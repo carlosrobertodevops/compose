@@ -36,8 +36,6 @@ services:
       timeout: 10s
       interval: 5s
       retries: 3
-    ports:
-      - 3001:3001
     depends_on:
       analytics:
         condition: service_healthy
