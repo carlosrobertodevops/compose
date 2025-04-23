@@ -20,8 +20,14 @@ services:
       - "8080:80"
       - "8081:81"
       - "4443:443"
+    environment:
+      - TZ=America/Sao_Paulo
+      - DB_SQLITE_FILE=/data/database.sqlite
+      - DISABLE_IPV6=true
     volumes:
       - ./nginx-data:/data
       - ./nginx-letsencrypt:/etc/letsencrypt
-    environment:
-      - TZ=America/Sao_Paulo
+
+networks:
+  easypanel_network:
+    external: true
