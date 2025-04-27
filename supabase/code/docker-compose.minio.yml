@@ -4,6 +4,8 @@
 version: '3.8'
 
 services:
+
+# minio
   minio:
     image: quay.io/minio/minio:latest
     container_name: minio
@@ -14,6 +16,8 @@ services:
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
       MINIO_SERVER_URL: ${MINIO_SERVER_URL}
     command: server /data --console-address ":9090"
+
+# nginx
   nginx:
     image: "jc21/nginx-proxy-manager:latest"
     restart: unless-stopped
